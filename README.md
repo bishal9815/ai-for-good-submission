@@ -1,5 +1,6 @@
 # ai-for-good-submission
-<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/f3c4f89b-fb41-492b-a96b-1c0c44797c8a" />
+<img width="1919" height="1073" alt="image" src="https://github.com/user-attachments/assets/8171f5a2-0c7b-490e-b0db-b1079a30c164" />
+
 
 
 # 💊 PharmaGuard: AI-Powered Supply Chain Optimizer
