@@ -1,5 +1,6 @@
 # ai-for-good-submission
-<img width="1919" height="1073" alt="image" src="https://github.com/user-attachments/assets/8171f5a2-0c7b-490e-b0db-b1079a30c164" />
+<img width="1919" height="1073" alt="image" src="<img width="2853" height="1577" alt="image" src="https://github.com/user-attachments/assets/10199e6e-e08d-4692-a430-77514baefa17" />
+ />
 
 
 
