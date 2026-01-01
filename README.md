@@ -34,8 +34,8 @@ Unlike traditional prototypes, this application is connected to a live **Snowfla
 
 | **Dashboard Overview** | **Real AI Analyst (Cortex)** |
 |:---:|:---:|
-| ![Dashboard]<img width="2879" height="1546" alt="image" src="https://github.com/user-attachments/assets/5ec32ceb-d2cc-4e58-8668-109ed4c8b4da" />
- ![AI Analyst]<img width="2870" height="1560" alt="image" src="https://github.com/user-attachments/assets/14b79ef9-0b8a-456a-bf58-bb746d4a384d" />
+| [Dashboard]<img width="2879" height="1546" alt="image" src="https://github.com/user-attachments/assets/5ec32ceb-d2cc-4e58-8668-109ed4c8b4da" />
+ [AI Analyst]<img width="2870" height="1560" alt="image" src="https://github.com/user-attachments/assets/14b79ef9-0b8a-456a-bf58-bb746d4a384d" />
  
 | *Live tracking of 200,000+ units* | *Natural Language SQL Analysis* |
 
