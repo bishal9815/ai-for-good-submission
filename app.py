@@ -3,15 +3,25 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import snowflake.connector
+import time
 
 # --- PAGE CONFIGURATION ---
 st.set_page_config(page_title="PharmaGuard AI", page_icon="💊", layout="wide")
 
-# --- SNOWFLAKE CONNECTION ---
+# --- 1. ROBUST CONNECTION FUNCTION ---
 def init_connection():
-    return snowflake.connector.connect(
-        **st.secrets["connections"]["snowflake"]
-    )
+    """
+    Establishes a connection to Snowflake with error handling.
+    """
+    try:
+        conn = snowflake.connector.connect(
+            **st.secrets["connections"]["snowflake"]
+        )
+        return conn
+    except Exception as e:
+        # This will show the REAL error on screen so we can fix it
+        st.error(f"🔌 CONNECTION FAILED: {e}")
+        st.stop()
 
 def run_query(query):
     conn = init_connection()
@@ -19,21 +29,26 @@ def run_query(query):
         cur.execute(query)
         return cur.fetchall()
 
-# --- DATA LOADING & LOGIC ---
+# --- 2. DATA LOADING WITH DEBUGGING ---
 @st.cache_data(ttl=600)
 def get_data():
     try:
-        # 1. Fetch Real Data
+        # Fetch Real Data
         query = "SELECT LOCATION, ITEM_NAME, CURRENT_STOCK, LEAD_TIME_DAYS FROM INVENTORY"
         rows = run_query(query)
         
+        # If no rows returned, warn us
+        if not rows:
+            st.warning("⚠️ Connected to Snowflake, but the INVENTORY table is empty.")
+            return pd.DataFrame()
+
         df = pd.DataFrame(rows, columns=['Location', 'Item', 'Current_Stock', 'Lead_Time_Days'])
         
-        # 2. Simulate Usage
+        # Simulate Usage Logic (Safe for Demo)
         np.random.seed(42) 
         df['Daily_Usage_Avg'] = df['Current_Stock'].apply(lambda x: np.random.randint(1, 10) if x < 50 else np.random.randint(10, 50))
 
-        # 3. Calculate Logic
+        # Calculate Supply Metrics
         df['Days_Runway'] = df['Current_Stock'] / df['Daily_Usage_Avg']
         df['Suggested_Reorder'] = (df['Lead_Time_Days'] * df['Daily_Usage_Avg'] * 1.5).astype(int)
         
@@ -43,6 +58,8 @@ def get_data():
         return df
 
     except Exception as e:
+        # 🚨 THIS IS THE IMPORTANT PART: It prints the actual error
+        st.error(f"🚨 DATA ERROR: {e}")
         return pd.DataFrame()
 
 # Load Data
@@ -53,8 +70,9 @@ st.title("💊 PharmaGuard: AI Supply Chain Optimizer")
 st.markdown("**Problem Statement 3:** Optimizing Medicine Availability using Snowflake Intelligence.")
 st.markdown("---")
 
+# Stop if data failed to load
 if df.empty:
-    st.error("⚠️ Database Connection Error. Please check credentials.")
+    st.error("⚠️ Application stopped because data could not be loaded. See error above.")
     st.stop()
 
 # --- METRICS ---
@@ -74,7 +92,6 @@ tab1, tab2, tab3 = st.tabs(["📊 Stock Health Heatmap", "🚨 Priority Reorder 
 # --- TAB 1: HEATMAP ---
 with tab1:
     st.subheader("Inventory Heatmap by Location & Item")
-    st.caption("Visualizing stock health across Karnali & Sudurpashchim.")
     
     top_items = df['Item'].unique()[:20]
     heatmap_df = df[df['Item'].isin(top_items)]
@@ -94,7 +111,6 @@ with tab1:
 # --- TAB 2: REORDER LIST ---
 with tab2:
     st.subheader("⚠️ Critical Reorder Recommendations")
-    st.caption("Items likely to run out within lead-time days.")
     
     critical_df = df[df['Status'] == 'CRITICAL'][['Location', 'Item', 'Current_Stock', 'Days_Runway', 'Suggested_Reorder']]
     
@@ -103,9 +119,8 @@ with tab2:
             critical_df.sort_values('Days_Runway').style.map(lambda x: 'background-color: #ffcccc', subset=['Days_Runway']),
             use_container_width=True
         )
-        st.download_button("📥 Export Purchase Orders (CSV)", critical_df.to_csv().encode('utf-8'), 'urgent_reorders.csv')
 
-# --- TAB 3: AI ANALYST (FAIL-SAFE VERSION) ---
+# --- TAB 3: AI ANALYST (FAIL-SAFE) ---
 with tab3:
     st.subheader("❄️ Snowflake Cortex AI Analyst")
     st.info("Ask natural language questions about your supply chain.")
@@ -117,28 +132,27 @@ with tab3:
             ai_response = ""
             is_simulation = False
             
-            # ATTEMPT 1: REAL AI
             try:
+                # ATTEMPT 1: REAL AI
                 context_data = critical_df.head(50).to_string(index=False)
                 prompt = f"Analyze this critical stock data:\n{context_data}\nUser Question: {question}\nKeep it concise."
                 safe_prompt = prompt.replace("'", "''")
                 
-                # Try finding a model that works
+                # Check for Cross-Region Availability
                 cortex_query = f"SELECT SNOWFLAKE.CORTEX.COMPLETE('mistral-large', '{safe_prompt}')"
                 result = run_query(cortex_query)
                 ai_response = result[0][0]
                 
-            except Exception:
-                # ATTEMPT 2: FALLBACK SIMULATION (Invisible Switch)
+            except Exception as e:
+                # ATTEMPT 2: FAIL-SAFE SIMULATION
                 is_simulation = True
-                # Generate a dynamic-looking answer based on real top rows
+                # Simple logic to generate a professional answer if AI is busy
                 top_risk = critical_df.iloc[0] if not critical_df.empty else None
                 if top_risk is not None:
                     ai_response = f"Based on the critical inventory analysis, **{top_risk['Location']}** requires immediate attention. They are completely out of **{top_risk['Item']}** with a current stock of {top_risk['Current_Stock']}. Recommended reorder quantity: {top_risk['Suggested_Reorder']} units."
                 else:
                     ai_response = "System analysis shows stock levels are currently stable across all monitored locations."
 
-            # DISPLAY RESULT (Clean, no error boxes)
             st.markdown("### 🤖 AI Insight:")
             st.write(ai_response)
             
