@@ -1,6 +1,6 @@
 # 💊 PharmaGuard: AI-Powered Supply Chain Optimizer
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)]([https://pharmaguard.streamlit.app/])
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://pharmaguard.streamlit.app/)
 [![Snowflake](https://img.shields.io/badge/Powered%20by-Snowflake-29B5E8?logo=snowflake)](https://www.snowflake.com/)
 [![Cortex AI](https://img.shields.io/badge/AI%20Model-Llama%203%20%2F%20Mistral-blue)](https://docs.snowflake.com/en/user-guide/snowflake-cortex-llm-functions)
 
