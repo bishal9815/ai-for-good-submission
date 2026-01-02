@@ -4,7 +4,8 @@
 [![Snowflake](https://img.shields.io/badge/Powered%20by-Snowflake-29B5E8?logo=snowflake)](https://www.snowflake.com/)
 [![Cortex AI](https://img.shields.io/badge/AI%20Model-Llama%203%20%2F%20Mistral-blue)](https://docs.snowflake.com/en/user-guide/snowflake-cortex-llm-functions)
 
-**Winner/Finalist Candidate for "AI for Good" Hackathon** *Problem Statement 3: Optimizing Medicine Availability in Remote Nepal*
+**Submission for the "AI for Good" Hackathon 2025**
+*Addressing Problem Statement 3: Optimizing Medicine Availability in Remote Nepal*
 
 ---
 
